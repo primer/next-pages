@@ -14,8 +14,11 @@ module.exports = (nextConfig = {}) => {
       }, config.resolve.alias)
 
       config.module.rules.push({
-        test: new RegExp(`^${path}$`),
-        use: require.resolve('val-loader')
+        test: new RegExp(`^(${name}|${path})$`),
+        use: {
+          loader: require.resolve('val-loader'),
+          options
+        }
       })
 
       if (typeof nextConfig.webpack === 'function') {
