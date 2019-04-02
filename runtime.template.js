@@ -14,7 +14,7 @@ walkPages(page => {
   pageMap.set(page.path, page)
 })
 
-export {pageList, pageMap, pageTree, walkPages, getFirstPage}
+module.exports = {pageList, pageMap, pageTree, walkPages, getFirstPage}
 
 function walkPages(visitor) {
   return visit(pageTree, visitor)
