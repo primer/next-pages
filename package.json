@@ -1,0 +1,22 @@
+{
+  "name": "next-pages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "globby": "^9.2.0",
+    "gray-matter": "^4.0.2",
+    "val-loader": "^1.1.1"
+  },
+  "devDependencies": {
+    "next": "^8.0.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
+}
