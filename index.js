@@ -11,7 +11,33 @@ const {readFileSync} = require('fs')
 
 const RUNTIME_TEMPLATE_PATH = join(__dirname, 'runtime.template.js')
 
-module.exports = (options = {}) => {
+module.exports = module.parent && module.parent.loaders
+  ? generateCode
+  : generateData()
+
+function generateData(options = {}) {
+  const pages = getPages(options)
+  const pageMap = getPathMap(pages)
+  const pageTree = getPageTree(pageMap)
+  return {
+    pageList: pages,
+    pageMap: pages.reduce((map, page) => {
+      map.set(page.path, page)
+      return map
+    }, new Map())
+  }
+}
+
+function generateCode(options = {}) {
+  const pages = getPages(options)
+  return {
+    cacheable: true,
+    dependencies: [RUNTIME_TEMPLATE_PATH, ...pages.map(page => page.file)],
+    code: getCodeForPages(pages)
+  }
+}
+
+function getPages(options) {
   // FIXME: get this from the config?
   const pageExtensions = ['md', 'mdx']
 
@@ -22,22 +48,15 @@ module.exports = (options = {}) => {
   const globs = ['!node_modules', ...pageExtensions.map(ext => `**/*.${ext}`)]
   // console.warn(`page globs: ${globs.join(', ')}`)
 
-  return globby(globs, {cwd: pagesDir}).then(pagePaths => {
-    const pages = pagePaths.map(path => {
-      const file = join(pagesDir, path)
-      const page = loadPage(file)
-      return Object.assign(page, {
-        path: getURLPathForFile(path),
-        requirePath: `./${path}`,
-        file
-      })
+  const pagePaths = globby.sync(globs, {cwd: pagesDir})
+  return pagePaths.map(path => {
+    const file = join(pagesDir, path)
+    const page = loadPage(file)
+    return Object.assign(page, {
+      path: getURLPathForFile(path),
+      requirePath: `./${path}`,
+      file
     })
-
-    return {
-      cacheable: true,
-      dependencies: [RUNTIME_TEMPLATE_PATH, ...pages.map(page => page.file)],
-      code: getCodeForPages(pages)
-    }
   })
 }
 
