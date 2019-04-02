@@ -11,7 +11,7 @@ const {readFileSync} = require('fs')
 
 const RUNTIME_TEMPLATE_PATH = join(__dirname, 'runtime.template.js')
 
-module.exports = () => {
+module.exports = (options = {}) => {
   // FIXME: get this from the config?
   const pageExtensions = ['md', 'mdx']
 
